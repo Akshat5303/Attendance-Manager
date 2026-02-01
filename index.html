@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Attendance Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* DARK PREMIUM PALETTE */
+            --bg-body: #020617;      /* Very dark slate */
+            --bg-card: #0f172a;      /* Dark slate card */
+            --bg-input: #1e293b;     /* Lighter slate input */
+            
+            --primary: #818cf8;      /* Neon Indigo */
+            --primary-glow: rgba(99, 102, 241, 0.25);
+            
+            --success: #34d399;      /* Neon Mint */
+            --success-bg: rgba(16, 185, 129, 0.15);
+            
+            --danger: #fb7185;       /* Neon Rose */
+            --danger-bg: rgba(244, 63, 94, 0.15);
+            
+            --text-main: #f1f5f9;    /* Off-white */
+            --text-muted: #94a3b8;   /* Muted grey */
+            
+            --border: #334155;       /* Subtle border */
+            --radius-lg: 24px;
+            --radius-md: 16px;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+        }
+
+        body {
+            background-color: var(--bg-body);
+            /* Subtle glow effect in background */
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+            padding: 40px 20px;
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        /* --- HEADER --- */
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        h1 { 
+            font-size: 2.5rem; 
+            font-weight: 800; 
+            letter-spacing: -1px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255,255,255,0.1);
+        }
+        
+        .brand { 
+            color: var(--primary);
+            text-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        /* --- CARDS --- */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 35px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+            /* Premium Drop Shadow */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle top highlight for 3D effect */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        }
+
+        h3 { 
+            margin-bottom: 25px; 
+            font-size: 0.9rem; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        /* --- INPUTS --- */
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: white;
+            background: var(--bg-input);
+            transition: all 0.3s ease;
+        }
+        
+        .input-group input:focus { 
+            outline: none; 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 4px var(--primary-glow);
+            background: #253045;
+        }
+
+        /* --- RESULTS --- */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .result-box {
+            padding: 24px;
+            border-radius: var(--radius-md);
+            text-align: center;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.02);
+        }
+
+        .result-box.green { 
+            background: var(--success-bg); 
+            border-color: rgba(16, 185, 129, 0.3); 
+            color: var(--success); 
+        }
+        
+        .result-box.red { 
+            background: var(--danger-bg); 
+            border-color: rgba(244, 63, 94, 0.3); 
+            color: var(--danger); 
+        }
+
+        .res-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; opacity: 0.7; letter-spacing: 1px; }
+        .res-value { font-size: 2rem; font-weight: 800; }
+
+        .analysis-text {
+            margin-top: 24px;
+            padding: 20px;
+            background: rgba(129, 140, 248, 0.1);
+            color: #c7d2fe;
+            border: 1px solid rgba(129, 140, 248, 0.2);
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* --- TABS --- */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 30px;
+            background: var(--bg-input);
+            padding: 6px;
+            border-radius: var(--radius-md);
+            width: fit-content;
+            border: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .tab:hover { color: white; }
+
+        .tab.active {
+            background: var(--border);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* --- PREDICTOR --- */
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 16px;
+        }
+
+        .scenario-card {
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-align: center;
+            border: 1px solid transparent;
+            background: rgba(255,255,255,0.03);
+            transition: transform 0.2s;
+        }
+        
+        .scenario-card:hover { transform: translateY(-3px); }
+        
+        .scenario-card h4 { font-size: 0.8rem; margin-bottom: 8px; color: var(--text-muted); }
+        .scenario-card .percent { font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; }
+        .scenario-card .status { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
+
+
+         /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- MOBILE --- */
+        @media (max-width: 650px) {
+            .input-grid { grid-template-columns: 1fr; }
+            .results-grid { grid-template-columns: 1fr; }
+            .scenario-grid { grid-template-columns: 1fr 1fr; }
+            h1 { font-size: 2rem; }
+            .card { padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Attendance <span class="brand">Manager</span></h1>
+        <p>Track. Analyze. Achieve.</p>
+    </header>
+
+    <div class="card">
+        <h3>Current Stats</h3>
+        <div class="input-grid">
+            <div class="input-group">
+                <label>Total Lectures</label>
+                <input type="number" id="inTotal" min="0" oninput="calculate()" placeholder="0">
+            </div>
+            <div class="input-group">
+                <label>Lectures Attended</label>
+                <input type="number" id="inAttended" min="0" oninput="calculate()" placeholder="0">
+            </div>
+        </div>
+
+        <div class="input-group" style="max-width: 200px;">
+            <label>Target Threshold (%)</label>
+            <input type="number" id="inTarget" value="75" oninput="calculate()">
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Analysis Results</h3>
+        <div class="results-grid">
+            <div class="result-box neutral">
+                <div class="res-label">Conducted</div>
+                <div class="res-value" id="outTotal">0</div>
+            </div>
+            <div class="result-box neutral">
+                <div class="res-label">Attended</div>
+                <div class="res-value" id="outAttended">0</div>
+            </div>
+            <div class="result-box" id="percentBox">
+                <div class="res-label">Current %</div>
+                <div class="res-value" id="outPercent">0%</div>
+            </div>
+        </div>
+        
+        <div class="analysis-text" id="analysisText">
+            💡 Enter your lectures to see your status.
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Future Scenarios</h3>
+        
+        <div class="tabs">
+            <div class="tab active" id="tabMiss" onclick="switchTab('miss')">Bunking</div>
+            <div class="tab" id="tabAttend" onclick="switchTab('attend')">Attending</div>
+        </div>
+
+        <div class="scenario-grid" id="scenarioGrid">
+            </div>
+    </div>
+
+
+    <footer>
+        Developed by <span class="brand">Akshu❤️</span>
+    </footer>
+</div>
+
+<script>
+    let currentMode = 'miss';
+
+    window.onload = function() {
+        if(localStorage.getItem('att_total')) document.getElementById('inTotal').value = localStorage.getItem('att_total');
+        if(localStorage.getItem('att_attended')) document.getElementById('inAttended').value = localStorage.getItem('att_attended');
+        if(localStorage.getItem('att_target')) document.getElementById('inTarget').value = localStorage.getItem('att_target');
+        calculate();
+    }
+
+    function calculate() {
+        const total = parseInt(document.getElementById('inTotal').value) || 0;
+        const attended = parseInt(document.getElementById('inAttended').value) || 0;
+        const target = parseFloat(document.getElementById('inTarget').value) || 75;
+
+        localStorage.setItem('att_total', total);
+        localStorage.setItem('att_attended', attended);
+        localStorage.setItem('att_target', target);
+
+        let percentage = total > 0 ? (attended / total) * 100 : 0;
+
+        document.getElementById('outTotal').innerText = total;
+        document.getElementById('outAttended').innerText = attended;
+        document.getElementById('outPercent').innerText = percentage.toFixed(2) + '%';
+
+        const pBox = document.getElementById('percentBox');
+        if (total > 0) {
+            pBox.className = percentage >= target ? 'result-box green' : 'result-box red';
+        } else {
+            pBox.className = 'result-box neutral';
+        }
+
+        updateAnalysis(total, attended, target, percentage);
+        renderScenarios(total, attended, target);
+    }
+
+    function updateAnalysis(total, attended, target, currentPercent) {
+        const el = document.getElementById('analysisText');
+        if (total === 0) { el.innerHTML = "💡 Enter your lectures to see your status."; return; }
+
+        if (currentPercent >= target) {
+            const maxBunks = Math.floor((attended / (target / 100)) - total);
+            el.innerHTML = maxBunks <= 0 
+                ? `⚡ Warning: You are on the edge! Do not miss next lecture.` 
+                : `✅ Safe Zone: You can bunk <b>${maxBunks}</b> lectures safely.`;
+        } else {
+            const req = Math.ceil(((target * total) - (100 * attended)) / (100 - target));
+            el.innerHTML = `🚀 Action Required: Attend <b>${req}</b> more lectures to hit ${target}%.`;
+        }
+    }
+
+    function switchTab(mode) {
+        currentMode = mode;
+        document.getElementById('tabMiss').className = mode === 'miss' ? 'tab active' : 'tab';
+        document.getElementById('tabAttend').className = mode === 'attend' ? 'tab active' : 'tab';
+        calculate(); 
+    }
+
+    function renderScenarios(total, attended, target) {
+        const grid = document.getElementById('scenarioGrid');
+        grid.innerHTML = ''; 
+        if (total === 0) return;
+
+        for (let i = 1; i <= 20; i++) {
+            let newTotal = total + i;
+            let newAttended = currentMode === 'attend' ? attended + i : attended;
+            let newPercent = (newAttended / newTotal) * 100;
+            let isSafe = newPercent >= target;
+            
+            const card = document.createElement('div');
+            card.className = 'scenario-card';
+            // Custom coloring for scenarios
+            if(isSafe) {
+                card.style.background = 'rgba(16, 185, 129, 0.1)';
+                card.style.border = '1px solid rgba(16, 185, 129, 0.2)';
+            } else {
+                card.style.background = 'rgba(244, 63, 94, 0.1)';
+                card.style.border = '1px solid rgba(244, 63, 94, 0.2)';
+            }
+
+            card.innerHTML = `
+                <h4>+ ${i} Lecture${i > 1 ? 's' : ''}</h4>
+                <div class="percent" style="color:${isSafe ? '#34d399' : '#fb7185'}">${newPercent.toFixed(2)}%</div>
+                <div class="status" style="color:${isSafe ? '#34d399' : '#fb7185'}">${isSafe ? 'On Track' : 'Below Goal'}</div>
+            `;
+            grid.appendChild(card);
+        }
+    }
+</script>
+
+</body>
+</html>
