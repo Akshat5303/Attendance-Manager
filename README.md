@@ -23,4 +23,5 @@ A modern, high-precision web application designed for students to track, analyze
 ## 👨‍💻 Developed By
 
 **Akshu**
-*A project for tracking academic progress with style.*
+
+**A project for tracking academic progress with style.**
